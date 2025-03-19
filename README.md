@@ -43,6 +43,7 @@ Crea un archivo `.env` en la raíz del proyecto basado en `.env.example`:
 PORT=3000
 NODE_ENV=development
 TOKEN=XXXXXXXXXXXXX
+API_URL=https://api.apis.net.pe/v2
 ```
 
 ## Ejecución
@@ -65,22 +66,22 @@ npm run start:prod
 ### Endpoint principal
 
 ```
-GET /search?documentType=[dni/ruc]&documentNumber=[number]
+GET /api/v1/search?documentType=[dni/ruc]&documentNumber=[number]
 ```
 
 ### Parámetros
 
-| Parámetro | Tipo | Descripción | Valores válidos |
-|-----------|------|-------------|----------------|
-| documentType | string | Tipo de documento a consultar | dni, ruc |
-| documentNumber | string | Número de documento | Números |
+| Parámetro      | Tipo   | Descripción                   | Valores válidos |
+| -------------- | ------ | ----------------------------- | --------------- |
+| documentType   | string | Tipo de documento a consultar | dni, ruc        |
+| documentNumber | string | Número de documento           | Números         |
 
 ### Ejemplos de uso
 
 #### Consulta de DNI
 
 ```
-GET /search?documentType=dni&documentNumber=12345678
+GET /api/v1/search?documentType=dni&documentNumber=12345678
 ```
 
 Respuesta:
@@ -89,11 +90,8 @@ Respuesta:
 {
   "status": "success",
   "data": {
-    "documentType": "dni",
-    "documentNumber": "12345678",
-    "personInfo": {
-      "fullName": "Nombre Apellido",
-    }
+    "fullName": "Nombre Apellido",
+    "checkDigit": "1"
   }
 }
 ```
@@ -101,7 +99,7 @@ Respuesta:
 #### Consulta de RUC
 
 ```
-GET /search?documentType=ruc&documentNumber=20123456789
+GET /api/v1/search?documentType=ruc&documentNumber=20123456789
 ```
 
 Respuesta:
@@ -110,15 +108,7 @@ Respuesta:
 {
   "status": "success",
   "data": {
-    "documentType": "ruc",
-    "documentNumber": "20123456789",
-    "companyInfo": {
-      "fullName": "Empresa S.A.C.",
-    }
+    "fullName": "Nombre Empresa"
   }
 }
 ```
-
-## Licencia
-
-Este proyecto está bajo la Licencia MIT.
