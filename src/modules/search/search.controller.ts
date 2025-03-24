@@ -29,7 +29,7 @@ export class SearchController {
   @ApiQuery({ name: 'documentNumber', description: 'Número de documento' })
   async findAll(@Query() query: SearchDto) {
     return {
-      message: 'success',
+      status: 'success',
       data: await this.searchService.search(query),
     };
   }
