@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import { DocumentType, SearchDto } from './dto/search.dto';
+import { SearchDto } from './dto/search.dto';
 import { catchError, firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
 
@@ -9,20 +9,20 @@ export class SearchService {
   constructor(private readonly httpService: HttpService) {}
 
   async search(query: SearchDto) {
-    const path = {
-      [DocumentType.DNI]: `/reniec`,
-      [DocumentType.RUC]: `/sunat`,
-    };
     try {
-      const { data } = await firstValueFrom(
+      const {
+        data: { data },
+      } = await firstValueFrom(
         this.httpService
-          .get<{
-            razonSocial?: string;
-            nombreCompleto?: string;
-            digitoVerificador?: string;
-          }>(
-            `${path[query.documentType]}/${query.documentType}?numero=${query.documentNumber}`,
-          )
+          .post<{
+            data: {
+              nombre_completo?: string;
+              nombre_o_razon_social?: string;
+              codigo_verificacion?: string;
+            };
+          }>(`${query.documentType}`, {
+            [query.documentType]: query.documentNumber,
+          })
           .pipe(
             catchError((e: AxiosError) => {
               throw e;
@@ -30,8 +30,8 @@ export class SearchService {
           ),
       );
       return {
-        fullName: data.nombreCompleto || data.razonSocial,
-        checkDigit: data.digitoVerificador,
+        fullName: data.nombre_completo || data.nombre_o_razon_social,
+        checkDigit: data.codigo_verificacion,
       };
     } catch {
       throw new NotFoundException({
